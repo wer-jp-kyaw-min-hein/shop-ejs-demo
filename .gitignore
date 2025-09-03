@@ -1,0 +1,13 @@
+node_modules/
+npm-debug.log*
+yarn.lock
+package-lock.json
+.DS_Store
+.env
+.env.*
+data.db
+*.sqlite
+*.sqlite3
+coverage/
+logs/
+.vscode/

@@ -1,0 +1,28 @@
+<%- include("../partials/header") %>
+<h2>Your Cart</h2>
+
+<% if (!items.length) { %>
+    <p>Cart is empty.</p>
+<% } else { %>
+    <table>
+        <tr><th>Product</th><th>Qty</th><th>Price</th><th>Line</th></tr>
+        <% items.forEach(it => { %>
+        <tr>
+            <td><%= it.product.name %></td>
+            <td><%= it.qty %></td>
+            <td>$<%= fmt(it.product.price_cents) %></td>
+            <td>$<%= fmt(it.line) %></td>
+        </tr>
+    <% }) %>
+    <tr><th colspan="3" style="text-align:right">Total</th><th>$<%= fmt(total) %></th></tr>
+    </table>}
+
+    <h3>Checkout</h3>
+    <form method="post" action="/order/submit" class="row">
+        <input name="customer_name" placeholder="Your name">
+        <input name="customer_email" type="email" placeholder="Email (optional)">
+        <button class="btn" type="submit">Submit Order</button>
+    </form>
+   <% } %>
+   
+   <%- include("../partials/footer") %>
