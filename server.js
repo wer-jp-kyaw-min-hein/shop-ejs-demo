@@ -23,12 +23,15 @@ app.use(cookieParser());
 const db = new Database(path.join(__dirname, "data.db"));
 db.exec(`
   CREATE TABLE IF NOT EXISTS cart_lines (
-    cid TEXT NOT NULL,
-    product_id TEXT NOT NULL,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,  -- single PK
+    cid TEXT NOT NULL,                     -- cart id (cookie)
+    product_id TEXT NOT NULL,              -- product id
     qty INTEGER NOT NULL,
-    PRIMARY KEY (cid, product_id)
+    UNIQUE (cid, product_id)               -- one row per product per cart
   );
+  CREATE INDEX IF NOT EXISTS idx_cart_lines_cid ON cart_lines(cid);
 `);
+
 
 // ensure a cart id cookie per visitor
 app.use((req, res, next) => {
@@ -48,7 +51,6 @@ const products = [
   { id: 6, name: "No Image", price_cents: 100, stock: 3, image_url: "",active: true }
 ];
 
-const cart = [];
 
 app.get("/", (req, res) => {
   const active = products.filter(p => p.active);
@@ -71,18 +73,15 @@ const qty = Number.parseInt(req.body.qty, 10);
 
   const cid = req.cookies.cid;
 
-  const line = cart.find(l => l.id == id);
-  if (line) line.qty += qty;
-  else cart.push({ id, qty });
+  db.prepare(`
+    INSERT INTO cart_lines (cid, product_id, qty)
+    VALUES (?, ?, ?)
+    ON CONFLICT(cid, product_id) DO UPDATE
+      SET qty = qty + excluded.qty
+  `).run(cid, String(id), qty);
 
- // upsert: add or bump quantity
- db.prepare(`
-  INSERT INTO cart_lines (cid, product_id, qty)
-  VALUES (?, ?, ?)
-  ON CONFLICT(cid, product_id) DO UPDATE SET qty = qty + excluded.qty
-`).run(cid, id, qty);
 
-  // product.stock = product.stock - Number(qtyStr);
+  product.stock -= qty;
 
   return res.redirect("/cart");
 });
@@ -93,7 +92,7 @@ app.get("/cart", (req, res) => {
   const rows = db.prepare(`SELECT product_id, qty FROM cart_lines WHERE cid = ? `).all(cid);
 
   const lines = rows.map(r => {
-    const p = products.find(pp => pp.id == line.id) || {};
+    const p = products.find(pp => pp.id == r.product_id) || {};
     const price_cents = p.price_cents || 0;
     return {
       id: r.product_id,
