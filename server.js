@@ -1,4 +1,5 @@
-import express from "express";
+import express from "express"; 
+import methodOverride from "method-override";
 import path from "path";
 import cookieParser from "cookie-parser";
 import Database from "better-sqlite3";
@@ -11,13 +12,20 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
+// --- view engine
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
-// (optional) static files
+// --- middlewares
 app.use(express.static(path.join(__dirname, "public")));
-app.use(express.urlencoded({ extended: false}));
+app.use(express.urlencoded({ extended: true})); // parse form
+app.use(express.json()); // parse JSON bodies
+app.use(methodOverride('_method')); // ?_method=PUT/DELETE from forms
 app.use(cookieParser());
+
+// --- mount admin products
+const adminProductsRouter = require('./routes/admin.products');
+app.use('/admin/products', adminProductsRouter);
 
 // --- DB setup ---
 const db = new Database(path.join(__dirname, "data.db"));
