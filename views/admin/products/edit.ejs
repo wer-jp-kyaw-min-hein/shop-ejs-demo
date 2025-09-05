@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Edit Product</title>
+  <style>body{font-family:system-ui;padding:24px}</style>
+</head>
+<body>
+  <h1>Edit Product</h1>
+  <%- include('./_form.ejs', { 
+        action: `/admin/products/${product.id}`, 
+        method: 'PUT', 
+        submitLabel: 'Update', 
+        product 
+      }) %>
+  <p><a href="/admin/products">Back</a></p>
+</body>
+</html>

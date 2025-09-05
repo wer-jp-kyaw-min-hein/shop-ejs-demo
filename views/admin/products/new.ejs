@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>New Product</title>
+  <style>body{font-family:system-ui;padding:24px}</style>
+</head>
+<body>
+  <h1>New Product</h1>
+  <% include ./_form.ejs %>
+  <script>
+    // expose locals for include
+    (function(){
+      const form = document.querySelector('form');
+    })();
+  </script>
+  <%- include('./_form.ejs', { 
+        action: '/admin/products', 
+        method: 'POST', 
+        submitLabel: 'Create', 
+        product 
+      }) %>
+  <p><a href="/admin/products">Back</a></p>
+</body>
+</html>

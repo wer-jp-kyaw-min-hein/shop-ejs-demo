@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Products</title>
+  <style>body{font-family:system-ui;padding:24px}</style>
+</head>
+<body>
+  <h1>Products</h1>
+  <p><a href="/admin/products/new">+ New Product</a></p>
+
+  <ul>
+    <% if (products.length === 0) { %>
+      <li>No products yet.</li>
+    <% } %>
+    <% products.forEach(p => { %>
+      <li style="margin:8px 0">
+        <strong><%= p.name %></strong>
+        — $<%= p.price %>
+        <% if (p.imageUrl) { %>
+          <img src="<%= p.imageUrl %>" alt="" style="height:24px;vertical-align:middle" />
+        <% } %>
+        — <%= p.inStock ? 'In stock' : 'Out of stock' %>
+        — <a href="/admin/products/<%= p.id %>">Edit</a>
+        <form action="/admin/products/<%= p.id %>?_method=DELETE" method="post" style="display:inline">
+          <button type="submit" onclick="return confirm('Delete this product?')">Delete</button>
+        </form>
+      </li>
+    <% }) %>
+  </ul>
+</body>
+</html>

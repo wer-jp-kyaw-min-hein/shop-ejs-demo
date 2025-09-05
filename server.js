@@ -4,6 +4,7 @@ import path from "path";
 import cookieParser from "cookie-parser";
 import Database from "better-sqlite3";
 import crypto from "crypto";
+import adminProductsRouter from "./routes/admin.products.js";
 // import { arrayBuffer } from "stream/consumers";
 import { fileURLToPath } from "url";
 
@@ -24,7 +25,7 @@ app.use(methodOverride('_method')); // ?_method=PUT/DELETE from forms
 app.use(cookieParser());
 
 // --- mount admin products
-const adminProductsRouter = require('./routes/admin.products');
+// const adminProductsRouter = require('./routes/admin.products');
 app.use('/admin/products', adminProductsRouter);
 
 // --- DB setup ---
