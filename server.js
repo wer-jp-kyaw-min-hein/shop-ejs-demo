@@ -5,7 +5,7 @@ import cookieParser from "cookie-parser";
 import Database from "better-sqlite3";
 import crypto from "crypto";
 import bodyParser from "body-parser";
-import cartRouter from "./routes/admin.products.js";
+import cartRouter from "./routes/cart.routes.js";
 import adminProductsRouter from "./routes/admin.products.js";
 // import { arrayBuffer } from "stream/consumers";
 import { fileURLToPath } from "url";
@@ -16,6 +16,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+app.use(express.json());
 
 // --- view engine
 app.set("view engine", "ejs");
@@ -179,7 +180,7 @@ app.get("/", (req, res) => {
 });
 
 // Handle add-to-cart posts
-app.post("/cart/add/:id", (req, res) => {
+app.post("/cart/add", (req, res) => {
   const { id } = req.params;
   const product = products.find(p => p.id == id && p.active);
   if (!product) return res.status(404).send("Not found");

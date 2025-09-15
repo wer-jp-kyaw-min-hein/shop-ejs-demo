@@ -6,8 +6,22 @@ const router = express.Router(); // Creates a mini Express app
 // LIST
 router.get('/', async (req, res) => {
     const products = await productStore.getAll();
-    res.render('admin/products/index', { products });
+    res.json(products);
 });
+
+// GET one product
+router.get("/:id", async (req, res) => {
+    const product = await productStore.getByID(req.params.id);
+    if (!product) return res.status(404).json({ error: "Not found" });
+    res.json(product);
+  });
+
+  // CREATE product
+router.post("/", async (req, res) => {
+    const product = await productStore.create(req.body);
+    res.status(201).json(product);
+  });
+  
 
 // NEW form
 router.get('/new', (req, res) => {

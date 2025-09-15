@@ -39,6 +39,11 @@ export const productStore = {
     return items.find(p => String(p.id) === String(id)) || null;
   },
 
+   // alias so old routes keep working
+   async get(id) {
+    return this.getByID(id);
+  },
+
   async create(data) {
     const items = await readAll();
     const product = {
