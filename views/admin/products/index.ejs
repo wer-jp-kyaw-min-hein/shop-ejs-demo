@@ -22,7 +22,7 @@
         <% } %>
         — <%= p.inStock ? 'In stock' : 'Out of stock' %>
         — <a href="/admin/products/<%= p.id %>">Edit</a>
-        <form action="/admin/products/<%= p.id %>?_method=DELETE" method="post" style="display:inline">
+        <form action="/admin/products/<%= p.id %>/delete" method="post" style="display:inline">
           <button type="submit" onclick="return confirm('Delete this product?')">Delete</button>
         </form>
       </li>

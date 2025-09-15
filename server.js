@@ -4,9 +4,13 @@ import path from "path";
 import cookieParser from "cookie-parser";
 import Database from "better-sqlite3";
 import crypto from "crypto";
+import bodyParser from "body-parser";
+import cartRouter from "./routes/admin.products.js";
 import adminProductsRouter from "./routes/admin.products.js";
 // import { arrayBuffer } from "stream/consumers";
 import { fileURLToPath } from "url";
+import session from 'express-session';
+import productStore  from './models/productStore.js'
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -23,10 +27,114 @@ app.use(express.urlencoded({ extended: true})); // parse form
 app.use(express.json()); // parse JSON bodies
 app.use(methodOverride('_method')); // ?_method=PUT/DELETE from forms
 app.use(cookieParser());
+app.use(bodyParser.json());
+
+// Cart routes
+app.use("/admin/products", adminProductsRouter);
+app.use("/cart", cartRouter);
+
+// const adminProductsRouter = require('./routes/admin.products');
+app.use(
+  session({
+    secret: 'dev_mini-shop-secret', // change in real app
+    resave: false,
+    saveUninitialized: true,
+    cookie: { maxAge: 1000 * 60 * 60 },
+  })
+);
 
 // --- mount admin products
-// const adminProductsRouter = require('./routes/admin.products');
 app.use('/admin/products', adminProductsRouter);
+
+// ---------- USER SIDE: products list ----------
+app.get('/products', async (req, res, next) => {
+  try {
+    const products = await productStore.getAll();
+    res.render('products/index', { products });
+  } catch (e) { next(e); }
+});
+
+// ---------- CART HELPERS ----------
+function getCart(req) {
+  if (!req.session.cart) req.session.cart = { items: {}, count: 0, subtotal: 0  };
+  return req.session.cart;
+}
+async function recalc(cart) {
+  cart.count = 0;
+  cart.subtotal = 0;
+  for (const [productId, item] of Object.entries(cart.items)) {
+    cart.count += item.qty;
+    cart.subtotal += item.qty * item.price;
+  }
+  cart.subtotal = Math.round(cart.subtotal * 100) / 100;
+}
+
+// ---------- CART ROUTES ----------
+app.post('/cart', async (req, res, next) => {
+  try {
+    const { productId, qty = 1 } = req.body;
+    const product = await productStore.getById(productId);
+    if (!product) return res.status(404).send('Product not found');
+
+    const cart = getCart(req);
+    if (!cart.items[productId]) {
+      cart.items[productId] = {
+        productId,
+        name: product.name,
+        price: Number(product.price) || 0,
+        qty: 0,
+      };
+    }
+    cart.items[productId].qty += Number(qty) || 1;
+    await recalc(cart);
+    res.redirect('/cart');
+  } catch (e) { next(e); }
+});
+
+app.get('/cart', (req, res) => {
+  const cart = getCart(req);
+  res.render('cart/index', { cart });
+});
+
+app.post('/cart/:id/increase', async (req, res) => {
+  const cart = getCart(req);
+  const item = cart.items[req.params.id]
+  if (item) item.qty += 1;
+  await recalc(cart);
+  res.redirect('/cart');
+});
+
+app.post('/cart/:id/decrease', async (req, res) => {
+  const cart = getCart(req);
+  const item = cart.items[req.params.id];
+  if (item) {
+    item.qty -= 1;
+    if (item.qty <= 0) delete cart.items[req.params.id];
+  }
+  await recalc(cart);
+  res.redirect('/cart');
+});
+
+app.post('/cart/;id/remove', async (req, res) => {
+  const cart = getCart(req);
+  delete cart.items[req.params.id];
+  await recalc(cart);
+  res.redirect('/cart');
+});
+
+app.post('/cart/clear', async (req, res) => {
+  req.session.cart = null;
+  res.redirect('/cart');
+});
+
+// ---------- SUBMIT ORDER (stub) ----------
+app.post('/orders', async (req, res) => {
+  const cart = getCart(req);
+  if (!cart.count) return res.redirect('/cart');
+  // TODO: save to a JSON orders file or DB later
+  req.session.cart = null;
+  res.render('orders/thanks');
+});
 
 // --- DB setup ---
 const db = new Database(path.join(__dirname, "data.db"));

@@ -7,19 +7,14 @@
 </head>
 <body>
   <h1>New Product</h1>
-  <% include ./_form.ejs %>
-  <script>
-    // expose locals for include
-    (function(){
-      const form = document.querySelector('form');
-    })();
-  </script>
-  <%- include('./_form.ejs', { 
+
+  <%- include('../products/_form.ejs', { 
         action: '/admin/products', 
         method: 'POST', 
         submitLabel: 'Create', 
-        product 
+        product: {} 
       }) %>
+
   <p><a href="/admin/products">Back</a></p>
 </body>
 </html>
