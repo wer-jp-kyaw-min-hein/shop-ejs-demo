@@ -45,7 +45,7 @@ app.use(
 );
 
 // --- mount admin products
-app.use('/admin/products', adminProductsRouter);
+// app.use('/admin/products', adminProductsRouter);
 
 // ---------- USER SIDE: products list ----------
 app.get('/products', async (req, res, next) => {

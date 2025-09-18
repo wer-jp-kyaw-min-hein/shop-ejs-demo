@@ -9,6 +9,31 @@
   <h1>Products</h1>
   <p><a href="/admin/products/new">+ New Product</a></p>
 
+  <table>
+    <thead>
+      <tr>
+        <th>Image</th><th>Name</th><th class="right">Price</th><th>Add</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if (products.length === 0) { %>
+        <tr><td colspan="4">No products yet.</td></tr>
+      <% } %>
+      <% products.forEach(p => { %>
+      <tr>
+        <td><% if (p.imageUrl) { %><img src="<%= p.imageUrl %>" alt=""><% } %></td>
+        <td><%= p.name %></td>
+        <td class="right">¥<%= Numver(p.price).toFixed(2) %></td>
+        <td>
+          <form method="post" action="/cart">
+            <input type="hidden" name="productId" value="<%= p.id %>" />
+            <button type="submit">Add to Cart</button>
+          </form>
+        </td>
+      </tr>
+      <% }) %>
+    </tbody>
+  </table>
   <ul>
     <% if (products.length === 0) { %>
       <li>No products yet.</li>
