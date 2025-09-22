@@ -40,12 +40,12 @@ app.use(
     secret: 'dev_mini-shop-secret', // change in real app
     resave: false,
     saveUninitialized: true,
-    cookie: { maxAge: 1000 * 60 * 60 },
+    cookie: { sameSite: 'lax' },
   })
 );
 
 // --- mount admin products
-// app.use('/admin/products', adminProductsRouter);
+app.use('/admin/products', adminProductsRouter);
 
 // ---------- USER SIDE: products list ----------
 app.get('/products', async (req, res, next) => {
@@ -93,40 +93,63 @@ app.post('/cart', async (req, res, next) => {
 });
 
 app.get('/cart', (req, res) => {
-  const cart = getCart(req);
-  res.render('cart/index', { cart });
+  res.json(req.session.cart || []);
 });
 
-app.post('/cart/:id/increase', async (req, res) => {
-  const cart = getCart(req);
-  const item = cart.items[req.params.id]
-  if (item) item.qty += 1;
-  await recalc(cart);
-  res.redirect('/cart');
-});
+// POST add to cart
+app.post('/cart', (req, res) => {
+  const { productId, quantity = 1 } = req.body;
+  const product = productStore.getById(productId); // or however you fetch
+  if (!product) return res.status(404).json({ error: 'Product not found' });
 
-app.post('/cart/:id/decrease', async (req, res) => {
-  const cart = getCart(req);
-  const item = cart.items[req.params.id];
-  if (item) {
-    item.qty -= 1;
-    if (item.qty <= 0) delete cart.items[req.params.id];
+  const current = req.session.cart || [];
+  const idx = current.findIndex(i => i.productId === productId);
+  let next;
+  if (idx >= 0) {
+    // make a new array so the session notices the change
+    next = current.map((i, k) =>
+      k === idx ? { ...i, quantity: i.quantity + Number(quantity) } : i
+    );
+  } else {
+    next = [...current, { productId, name: product.name, price: product.price, quantity: Number(quantity) }];
   }
-  await recalc(cart);
-  res.redirect('/cart');
+  req.session.cart = next;        // <— reassign (don’t mutate in place)
+  req.session.save(() => {        // <— ensure it persists before responding
+    res.status(201).json(req.session.cart);
+  });
 });
 
-app.post('/cart/;id/remove', async (req, res) => {
-  const cart = getCart(req);
-  delete cart.items[req.params.id];
-  await recalc(cart);
-  res.redirect('/cart');
-});
 
-app.post('/cart/clear', async (req, res) => {
-  req.session.cart = null;
-  res.redirect('/cart');
-});
+// app.post('/cart/:id/increase', async (req, res) => {
+//   const cart = getCart(req);
+//   const item = cart.items[req.params.id]
+//   if (item) item.qty += 1;
+//   await recalc(cart);
+//   res.redirect('/cart');
+// });
+
+// app.post('/cart/:id/decrease', async (req, res) => {
+//   const cart = getCart(req);
+//   const item = cart.items[req.params.id];
+//   if (item) {
+//     item.qty -= 1;
+//     if (item.qty <= 0) delete cart.items[req.params.id];
+//   }
+//   await recalc(cart);
+//   res.redirect('/cart');
+// });
+
+// app.post('/cart/;id/remove', async (req, res) => {
+//   const cart = getCart(req);
+//   delete cart.items[req.params.id];
+//   await recalc(cart);
+//   res.redirect('/cart');
+// });
+
+// app.post('/cart/clear', async (req, res) => {
+//   req.session.cart = null;
+//   res.redirect('/cart');
+// });
 
 // ---------- SUBMIT ORDER (stub) ----------
 app.post('/orders', async (req, res) => {

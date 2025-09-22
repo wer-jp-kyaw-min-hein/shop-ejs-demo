@@ -7,33 +7,27 @@
 </head>
 <body>
   <h1>Products</h1>
-  <p><a href="/admin/products/new">+ New Product</a></p>
+<a href="/admin/products/new">New Product</a>
 
-  <table>
-    <thead>
+<table>
+  <thead>
+    <tr><th>Name</th><th>Price</th><th>Image</th><th>Description</th></tr>
+  </thead>
+  <tbody>
+    <% for (const p of products) { %>
       <tr>
-        <th>Image</th><th>Name</th><th class="right">Price</th><th>Add</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% if (products.length === 0) { %>
-        <tr><td colspan="4">No products yet.</td></tr>
-      <% } %>
-      <% products.forEach(p => { %>
-      <tr>
-        <td><% if (p.imageUrl) { %><img src="<%= p.imageUrl %>" alt=""><% } %></td>
         <td><%= p.name %></td>
-        <td class="right">¥<%= Numver(p.price).toFixed(2) %></td>
+        <td><%= p.price %></td>
         <td>
-          <form method="post" action="/cart">
-            <input type="hidden" name="productId" value="<%= p.id %>" />
-            <button type="submit">Add to Cart</button>
-          </form>
+          <% if (p.imageUrl) { %>
+            <img src="<%= p.imageUrl %>" alt="<%= p.name %>" width="60">
+          <% } %>
         </td>
+        <td><%= p.description %></td>
       </tr>
-      <% }) %>
-    </tbody>
-  </table>
+    <% } %>
+  </tbody>
+</table>
   <ul>
     <% if (products.length === 0) { %>
       <li>No products yet.</li>
@@ -47,7 +41,7 @@
         <% } %>
         — <%= p.inStock ? 'In stock' : 'Out of stock' %>
         — <a href="/admin/products/<%= p.id %>">Edit</a>
-        <form action="/admin/products/<%= p.id %>/delete" method="post" style="display:inline">
+        <form action="/admin/products/<%= p.id %>/delete" method="post" onsubmit="return confirm('Delete this product?')">>
           <button type="submit" onclick="return confirm('Delete this product?')">Delete</button>
         </form>
       </li>

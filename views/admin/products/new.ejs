@@ -8,12 +8,12 @@
 <body>
   <h1>New Product</h1>
 
-  <%- include('../products/_form.ejs', { 
-        action: '/admin/products', 
-        method: 'POST', 
-        submitLabel: 'Create', 
-        product: {} 
-      }) %>
+  <%- include('./_form.ejs', { 
+    action: '/admin/products', 
+    method: 'POST', 
+    submitLabel: 'Create', 
+    product: {} 
+}) %>
 
   <p><a href="/admin/products">Back</a></p>
 </body>

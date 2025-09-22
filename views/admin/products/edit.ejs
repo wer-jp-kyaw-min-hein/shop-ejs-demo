@@ -7,12 +7,22 @@
 </head>
 <body>
   <h1>Edit Product</h1>
-  <%- include('./_form.ejs', { 
-        action: `/admin/products/${product.id}`, 
-        method: 'PUT', 
-        submitLabel: 'Update', 
-        product 
-      }) %>
-  <p><a href="/admin/products">Back</a></p>
+
+<form action="/admin/products/<%= product.id %>/edit" method="POST">
+  <label>Name</label>
+  <input type="text" name="name" value="<%= product.name %>" required>
+
+  <label>Price</label>
+  <input type="number" name="price" value="<%= product.price %>" required>
+
+  <label>Image URL</label>
+  <input type="url" name="imageUrl" value="<%= product.imageUrl || '' %>">
+
+  <label>Description</label>
+  <textarea name="description"><%= product.description || '' %></textarea>
+
+  <button type="submit">Update</button>
+  <a href="/admin/products">Cancel</a>
+</form>
 </body>
 </html>
