@@ -5,18 +5,27 @@ import cookieParser from "cookie-parser";
 import Database from "better-sqlite3";
 import crypto from "crypto";
 import bodyParser from "body-parser";
-import cartRouter from "./routes/cart.routes.js";
+import cartRouter from "./routes/cart.js";
 import adminProductsRouter from "./routes/admin.products.js";
+import checkoutRouter from "./routes/checkout.js";
 // import { arrayBuffer } from "stream/consumers";
 import { fileURLToPath } from "url";
 import session from 'express-session';
-import productStore  from './models/productStore.js'
+import {productStore}  from './models/productStore.js'
+import productRouter from './routes/products.js';
+import devSeed from "./routes/dev.seed.js";
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
 app.use(express.json());
+// app.use('/api/products', products);
+app.use('/cart', cartRouter);
+app.use("/checkout", checkoutRouter);
+app.use("/dev", devSeed);
+app.use("/products", productRouter);
 
 // --- view engine
 app.set("view engine", "ejs");
@@ -29,6 +38,12 @@ app.use(express.json()); // parse JSON bodies
 app.use(methodOverride('_method')); // ?_method=PUT/DELETE from forms
 app.use(cookieParser());
 app.use(bodyParser.json());
+app.use(session({
+  secret: process.env.SESSION_SECRET || "dev-secret",
+  resave: false,
+  saveUninitialized: false,
+  cookie: { maxAge: 1000*60*60*2 } // 2h
+}));
 
 // Cart routes
 app.use("/admin/products", adminProductsRouter);
@@ -181,6 +196,13 @@ app.use((req, res, next) => {
   }
   next();
 });
+
+app.use((req, res, next) => {
+  const count = (req.session.cart || []).reduce((s, l) => s + l.qty, 0);
+  res.locals.cartCount = count; // available in all EJS
+  next();
+});
+
 
 // ---- VAR LIST (mock products) ----
 const products = [

@@ -1,9 +1,12 @@
-<!DOCTYPE html>
-<html>
-    <head><meta charset="utf-8"><title>Thanks</title></head>
-    <body>
-        <h1>Order submitted 🎉</h1>
-        <p>We received your order. (In this demo, it isn't persisted yet.)</p>
-        <p><a href="/products">Back to produts</a></p>
-    </body>
-</html>
+<h1>Thank you for your order!</h1>
+<p>Order ID: <%= order.id %></p>
+<p>Total: ¥<%= order.total.toLocaleString() %></p>
+
+<h3>Items</h3>
+<ul>
+  <% order.lines.forEach(l => { %>
+    <li><strong><%= l.id %></strong> — Qty: <%= l.qty %> — ¥<%= (l.price * l.qty).toLocaleString() %></li>
+  <% }) %>
+</ul>
+
+<p><a href="/products">Continue shopping</a></p>

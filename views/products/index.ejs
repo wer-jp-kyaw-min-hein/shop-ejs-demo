@@ -1,0 +1,14 @@
+<h1>Products</h1>
+<ul>
+  <% products.forEach(p => { %>
+    <li>
+      <img src="<%= p.imageUrl %>" width="60" />
+      <strong><%= p.name %></strong> — ¥<%= p.price %>
+      <form action="/cart/add/<%= p.id %>" method="POST" style="display:inline">
+        <button type="submit">Add to Cart</button>
+      </form>
+    </li>
+  <% }) %>
+</ul>
+
+<p><a href="/cart">Go to Cart</a></p>

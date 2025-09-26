@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8" />
@@ -48,4 +48,17 @@
     <% }) %>
   </ul>
 </body>
-</html>
+</html> -->
+
+<!-- views/products/index.ejs -->
+<h1>Products</h1>
+<ul>
+  <% (products || []).forEach(p => { %>
+    <li>
+      <strong><%= p.name %></strong> — ¥<%= p.price %>
+      <form action="/cart/add/<%= p.id %>" method="POST" style="display:inline">
+        <button type="submit">Add to Cart</button>
+      </form>
+    </li>
+  <% }) %>
+</ul>

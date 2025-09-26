@@ -1,0 +1,25 @@
+<button class="btn-add" data-id="<%= p.id %>">Add to cart</button>
+<input type="number" name="qty" value="1" min="1" />
+
+<script>
+    document.addEventListener('click', async (e) => {
+        if (!e.target.matches('.btn-add')) return;
+        const btn = e.target;
+        const card = btn.closet('.product-card') || document; // adjust to your markup
+        const qty = Number((card.querySelector('input[name=qty]')?.value) || 1);
+        const productId = btn.dataset.id;
+
+        const r = await fetch('/cart', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ productId, quantity: qty })
+        });
+        const data = await r.json();
+        if (r.ok) {
+            // show toast / badge update etc.
+            console.log('Cart:', data);
+        } else {
+            alert(data.error || 'Failed to add to cart');
+        }
+    });
+</script>

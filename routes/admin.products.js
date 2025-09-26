@@ -1,7 +1,8 @@
 import { Router } from "express";
+import express from "express";
 // const store = require('../models/productStore');
-import productStore from "../models/productStore.js";
-const router = Router(); // Creates a mini Express app
+import { productStore } from "../models/productStore.js";
+const router = express.Router(); // Creates a mini Express app
 
 // LIST
 router.get('/', async (req, res) => {
