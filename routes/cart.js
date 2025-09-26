@@ -87,21 +87,25 @@ const router = express.Router();
 
 // Show cart
 router.get("/", (req, res) => {
-  const cart = req.session.cart || [];
-  res.render("cart/index", { cart });
+  const data = cartDetailed(req, productStore) || { lines: [], total: 0, count: 0 };
+  res.render("cart/index", { cart: data });
 });
 
 // Add
 router.post("/add/:id", (req, res) => {
   const p = productStore.getById(req.params.id);
   if (!p) return res.status(404).send("Product not found");
-  addToCart(req, p.id, 1);
+
+  const qty = Math.max(1, parseInt(req.body.qty || "1", 10) || 1);
+  addToCart(req, p.id, qty);
+
+  req.session.flash = `Added ${qty} × ${p.name} to cart`;
   res.redirect("/cart");
 });
 
 // Update quantity
 router.post("/qty/:id", (req, res) => {
-  const qty = parseInt(req.body.qty || "1", 10);
+  const qty = Math.max(0, Math.min(99, parseInt(req.body.qty||'1',10)||1));
   setQty(req, req.params.id, isNaN(qty) ? 1 : qty);
   res.redirect("/cart");
 });

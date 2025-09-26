@@ -1,14 +1,16 @@
+<%- include('partials/header') %>
 <h1>Products</h1>
-<ul>
+<ul style="list-style:none;padding:0">
   <% products.forEach(p => { %>
-    <li>
-      <img src="<%= p.imageUrl %>" width="60" />
-      <strong><%= p.name %></strong> — ¥<%= p.price %>
-      <form action="/cart/add/<%= p.id %>" method="POST" style="display:inline">
+    <li style="margin:12px 0">
+      <img src="<%= p.imageUrl %>" width="60" style="vertical-align:middle" />
+      <strong><%= p.name %></strong> — ¥<%= p.price.toLocaleString() %>
+
+      <form action="/cart/add/<%= p.id %>" method="POST" style="display:inline; margin-left:8px">
+        <input type="number" name="qty" min="1" value="1" style="width:60px" />
         <button type="submit">Add to Cart</button>
       </form>
     </li>
   <% }) %>
 </ul>
-
-<p><a href="/cart">Go to Cart</a></p>
+<p><a href="/cart">Go to Cart (<%= cartCount %>)</a></p>

@@ -1,0 +1,6 @@
+<h1>Orders</h1>
+<ul>
+  <% orders.forEach(o=>{ %>
+    <li><code><%= o.id %></code> — <%= yen(o.total) %> — <%= o.createdAt %></li>
+  <% }) %>
+</ul>
