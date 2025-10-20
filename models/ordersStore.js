@@ -1,7 +1,7 @@
 // models/ordersStore.js
 import { randomUUID } from "node:crypto";
 
-export const ordersStore = {
+export const OrdersStore = {
   _items: [],
 
   create({ lines, total }) {
