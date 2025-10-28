@@ -30,7 +30,6 @@ app.use(express.json());                         // JSON bodies
 app.use(methodOverride("_method"));
 app.use(cookieParser());                         // optional
 
-// ✅ Session MUST be before any routers that use req.session
 app.use(session({
   secret: process.env.SESSION_SECRET || "dev-secret",
   resave: false,

@@ -11,7 +11,7 @@ const DB_PATH = path.join(__dirname, "..", "data", "cart.json");
 
 function ensureDB() {
     const dir = path.dirname(DB_PATH);
-    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recrusive: true });
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
     if (!fs.existsSync(DB_PATH)) fs.writeFileSync(DB_PATH, "[]", "utf8");
 }
 
@@ -35,7 +35,7 @@ export const cartStore = {
 
         // coerce qty to a positive integer (default 1)
         let n = Number(qty);
-        if (!Number,isFinite(n) || n <= 0) n = 1;
+        if (!Number.isFinite(n) || n <= 0) n = 1;
         n = Math.floor(n);
 
         const idStr = String(productId);

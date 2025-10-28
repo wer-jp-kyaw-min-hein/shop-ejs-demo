@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Orders</title>
+  <style>body{font-family:system-ui;padding:24px}</style>
+}</style>
+</head>
+<body>
+  <h1>Orders</h1>
+  <p><a href="/admin/products">Manage Products</a></p>
+  <% if (!orders || orders.length === 0) { %>
+    <p>No orders yet.</p>
+  <% } else { %>
+    <table border="1" cellpadding="8">
+      <thead>
+        <tr><th>ID</th><th>Lines</th><th>Total</th><th>Status</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+        <% orders.forEach(o => { %>
+          <tr>
+            <td><a href="/admin/orders/<%= o.id %>"><%= o.id %></a></td>
+            <td>
+              <ul>
+                <% o.lines.forEach(l => { %>
+                  <li><%= l.qty %> × <%= l.id %> @ <%= l.price %></li>
+                <% }) %>
+              </ul>
+            </td>
+            <td>¥<%= o.total %></td>
+            <td><%= o.status %></td>
+            <td>
+              <form action="/admin/orders/<%= o.id %>/accept" method="post" style="display:inline">
+                <button type="submit">Accept</button>
+              </form>
+              <form action="/admin/orders/<%= o.id %>/reject" method="post" style="display:inline;margin-left:8px">
+                <button type="submit">Reject</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+</body>
+</html>
