@@ -96,12 +96,24 @@ class ProductStore {
     return this.items;
   }
 
+  // Alias for getAll() (optional, for compatibility)
+  all() {
+    return this.items;
+  }
+
+  // Find product by ID (main)
   getById(id) {
     // accept "1" or 1
     const s = String(id);
     return this.items.find(p => String(p.id) === s) || null;
   }
 
+  // Alias for getById() (optional, for compatibility)
+  findById(id) {
+    return this.getById(id);
+  }
+
+  // Create new product
   create({ name, price, imageUrl, description }) {
     const product = {
       id: randomUUID(),      // or use incremental ids if you prefer
@@ -115,6 +127,27 @@ class ProductStore {
     this.items.push(product);
     return product;
   }
+
+  // 🆕 Add this update method
+  update(id, { name, price, imageUrl, description }) {
+    const product = this.getById(id);
+    if (!product) return null;
+
+    product.name = name;
+    product.price = price;
+    product.imageUrl = imageUrl || "";
+    product.description = description || "";
+    product.updatedAt = new Date().toISOString();
+    return product;
+}
+
+// 🆕 Add this remove method
+remove(id) {
+  const index = this.items.findIndex(p => String(p.id) === String(id));
+  if (index === -1) return false;
+  this.items.splice(index, 1);
+  return true;
+}
 }
 
 export const ProductStore = new ProductStore();
