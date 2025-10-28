@@ -32,17 +32,17 @@
     <% if (products.length === 0) { %>
       <li>No products yet.</li>
     <% } %>
-    <% products.forEach(p => { %>
+        <% products.forEach(p => { %>
       <li style="margin:8px 0">
         <strong><%= p.name %></strong>
         — $<%= p.price %>
         <% if (p.imageUrl) { %>
           <img src="<%= p.imageUrl %>" alt="" style="height:24px;vertical-align:middle" />
         <% } %>
-        — <%= p.inStock ? 'In stock' : 'Out of stock' %>
-        — <a href="/admin/products/<%= p.id %>">Edit</a>
-        <form action="/admin/products/<%= p.id %>/delete" method="post" onsubmit="return confirm('Delete this product?')">>
-          <button type="submit" onclick="return confirm('Delete this product?')">Delete</button>
+        - — <%= p.inStock ? 'In stock' : 'Out of stock' %>
+        - — <a href="/admin/products/<%= p.id %>/edit">Edit</a>
+        - <form action="/admin/products/<%= p.id %>/delete" method="post" onsubmit="return confirm('Delete this product?')">
+          <button type="submit">Delete</button>
         </form>
       </li>
     <% }) %>

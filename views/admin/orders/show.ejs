@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Order <%= order.id %></title>
+  <style>body{font-family:system-ui;padding:24px}</style>
+</head>
+<body>
+  <h1>Order <%= order.id %></h1>
+  <p>Status: <strong><%= order.status %></strong></p>
+  <p>Created: <%= order.createdAt %></p>
+  <h2>Lines</h2>
+  <ul>
+    <% order.lines.forEach(l => { %>
+      <li><%= l.qty %> × <%= l.id %> @ ¥<%= l.price %> (subtotal ¥<%= l.qty * l.price %>)</li>
+    <% }) %>
+  </ul>
+  <p>Total: ¥<%= order.total %></p>
+
+  <form action="/admin/orders/<%= order.id %>/accept" method="post" style="display:inline">
+    <button type="submit">Accept</button>
+  </form>
+  <form action="/admin/orders/<%= order.id %>/reject" method="post" style="display:inline;margin-left:8px">
+    <button type="submit">Reject</button>
+  </form>
+
+  <p><a href="/admin/orders">Back to orders</a></p>
+</body>
+</html>

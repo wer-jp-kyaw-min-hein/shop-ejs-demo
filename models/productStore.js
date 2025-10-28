@@ -85,69 +85,87 @@
 //   export default productStore;
 
 // models/productStore.js  (ESM)
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 import { randomUUID } from "node:crypto";
 
-class ProductStore {
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const DATA_DIR = path.resolve(__dirname, "..", "data");
+const DB_PATH = path.join(DATA_DIR, "products.json");
+
+function ensure() {
+  if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
+  if (!fs.existsSync(DB_PATH)) fs.writeFileSync(DB_PATH, JSON.stringify([], null, 2), "utf8");
+}
+
+function readAll() {
+  ensure();
+  try {
+    const raw = fs.readFileSync(DB_PATH, "utf8") || "[]";
+    return JSON.parse(raw);
+  } catch (e) {
+    return [];
+  }
+}
+
+function writeAll(items) {
+  ensure();
+  fs.writeFileSync(DB_PATH, JSON.stringify(items, null, 2), "utf8");
+}
+
+class ProductStoreClass {
   constructor() {
-    this.items = []; // seed a few if you want
+    this.items = readAll();
   }
 
-  getAll() {
-    return this.items;
-  }
-
-  // Alias for getAll() (optional, for compatibility)
   all() {
     return this.items;
   }
 
-  // Find product by ID (main)
-  getById(id) {
-    // accept "1" or 1
-    const s = String(id);
-    return this.items.find(p => String(p.id) === s) || null;
+  getAll() {
+    return this.all();
   }
 
-  // Alias for getById() (optional, for compatibility)
+  getById(id) {
+    const s = String(id);
+    return this.items.find((p) => String(p.id) === s) || null;
+  }
+
   findById(id) {
     return this.getById(id);
   }
 
-  // Create new product
   create({ name, price, imageUrl, description }) {
-    const product = {
-      id: randomUUID(),      // or use incremental ids if you prefer
-      name,
-      price,                 // number (e.g., 1999)
-      imageUrl: imageUrl || "",
-      description: description || "",
+    const rec = {
+      id: randomUUID(),
+      name: String(name || "").trim(),
+      price: Number(price) || 0,
+      imageUrl: imageUrl ? String(imageUrl).trim() : "",
+      description: description ? String(description).trim() : "",
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
-    this.items.push(product);
-    return product;
+    this.items.push(rec);
+    writeAll(this.items);
+    return rec;
   }
 
-  // 🆕 Add this update method
-  update(id, { name, price, imageUrl, description }) {
-    const product = this.getById(id);
-    if (!product) return null;
+  update(id, patch) {
+    const idx = this.items.findIndex((p) => String(p.id) === String(id));
+    if (idx === -1) return null;
+    this.items[idx] = { ...this.items[idx], ...patch, updatedAt: new Date().toISOString() };
+    writeAll(this.items);
+    return this.items[idx];
+  }
 
-    product.name = name;
-    product.price = price;
-    product.imageUrl = imageUrl || "";
-    product.description = description || "";
-    product.updatedAt = new Date().toISOString();
-    return product;
+  remove(id) {
+    const before = this.items.length;
+    this.items = this.items.filter((p) => String(p.id) !== String(id));
+    if (this.items.length !== before) writeAll(this.items);
+    return before !== this.items.length;
+  }
 }
 
-// 🆕 Add this remove method
-remove(id) {
-  const index = this.items.findIndex(p => String(p.id) === String(id));
-  if (index === -1) return false;
-  this.items.splice(index, 1);
-  return true;
-}
-}
-
-export const ProductStore = new ProductStore();
+export const productStore = new ProductStoreClass();

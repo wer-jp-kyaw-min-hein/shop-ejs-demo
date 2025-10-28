@@ -1,1 +1,29 @@
-[]
+[
+	{
+		"id": "1a2b3c4d-0000-0000-0000-000000000001",
+		"name": "Classic T-Shirt",
+		"price": 1999,
+		"imageUrl": "https://via.placeholder.com/150",
+		"description": "Comfortable cotton t-shirt",
+		"createdAt": "2025-10-28T00:00:00.000Z",
+		"updatedAt": "2025-10-28T00:00:00.000Z"
+	},
+	{
+		"id": "2b3c4d5e-0000-0000-0000-000000000002",
+		"name": "Denim Jeans",
+		"price": 4999,
+		"imageUrl": "https://via.placeholder.com/150",
+		"description": "Classic straight-fit jeans",
+		"createdAt": "2025-10-28T00:00:00.000Z",
+		"updatedAt": "2025-10-28T00:00:00.000Z"
+	},
+	{
+		"id": "3c4d5e6f-0000-0000-0000-000000000003",
+		"name": "Sneakers",
+		"price": 6999,
+		"imageUrl": "https://via.placeholder.com/150",
+		"description": "Lightweight everyday sneakers",
+		"createdAt": "2025-10-28T00:00:00.000Z",
+		"updatedAt": "2025-10-28T00:00:00.000Z"
+	}
+]
