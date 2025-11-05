@@ -80,10 +80,17 @@
 // export default router;
 
 import express from "express";
+import { showCart, addItem } from "../controllers/cartController.js";
 import { addToCart, setQty, removeFromCart, cartDetailed } from "../lib/cart.js";
-import { productStore } from "../models/productStore.js"; // must expose getById
+import { productStore } from "../models/ProductStore.js"; // must expose getById
+import { Home } from "../controllers/homeCl.js";
 
 const router = express.Router();
+
+// just connect route to controller
+router.get("/", Home);
+router.get("/", showCart);
+router.get("/add/:id", addItem);
 
 // Show cart
 router.get("/", (req, res) => {
@@ -115,5 +122,6 @@ router.post("/remove/:id", (req, res) => {
   removeFromCart(req, req.params.id);
   res.redirect("/cart");
 });
+
 
 export default router;
