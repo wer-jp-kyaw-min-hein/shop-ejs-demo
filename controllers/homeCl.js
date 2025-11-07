@@ -1,4 +1,4 @@
-import { cartDetailed } from "../lib/cart";
+import { cartDetailed } from "../lib/cart.js";
 import { productStore } from "../models/productStore.js"; // must expose getById
 
 export const Home = (req, res) => {

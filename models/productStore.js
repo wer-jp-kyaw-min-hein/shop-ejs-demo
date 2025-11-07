@@ -87,7 +87,7 @@
 // models/productStore.js  (ESM)
 import { randomUUID } from "node:crypto";
 
-class ProductStore {
+export class ProductStore {
   constructor() {
     this.items = []; // seed a few if you want
   }
@@ -150,4 +150,4 @@ remove(id) {
 }
 }
 
-export const ProductStore = new ProductStore();
+export const productStore = new ProductStore();
