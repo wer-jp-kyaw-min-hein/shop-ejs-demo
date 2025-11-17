@@ -68,6 +68,7 @@ app.use("/admin/products", adminProductsRouter); // admin CRUD
 app.use("/cart", cartRouter);                    // session cart (lib/cart.js)
 app.use("/checkout", checkoutRouter);            // simple checkout
 app.use('/admin/orders', adminOrdersRouter);
+app.use('/orders', adminOrdersRouter)
 
 // server.js (near your other /dev routes)
 // app.get("/dev/reset-session", (req, res) => {

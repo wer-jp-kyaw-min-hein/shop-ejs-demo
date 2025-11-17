@@ -1,6 +1,16 @@
-<h1>Orders</h1>
+<!-- <h1>Orders</h1>
 <ul>
   <% orders.forEach(o=>{ %>
     <li><code><%= o.id %></code> — <%= yen(o.total) %> — <%= o.createdAt %></li>
   <% }) %>
+</ul> -->
+<h1>Orders</h1>
+<ul>
+  <% if (orders.length === 0) { %>
+    <li>No orders yet.</li>
+  <% } else { %>
+    <% orders.forEach(order => { %>
+      <li><%= order.id %> - <%= order.status || 'Pending' %></li>
+    <% }) %>
+  <% } %>
 </ul>
