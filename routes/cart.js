@@ -82,7 +82,7 @@
 import express from "express";
 import { showCart, addItem } from "../controllers/cartController.js";
 import { addToCart, setQty, removeFromCart, cartDetailed } from "../lib/cart.js";
-import { productStore } from "../models/ProductStore.js"; // must expose getById
+import { productStore } from "../models/productStore.js"; // must expose getById
 import { Home } from "../controllers/homeCl.js";
 
 const router = express.Router();

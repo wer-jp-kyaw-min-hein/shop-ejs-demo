@@ -1,5 +1,5 @@
 import { addToCart, setQty, removeFromCart, cartDetailed } from '../lib/cart.js';
-import { productStore } from '../models/ProductStore.js';
+import { productStore } from '../models/productStore.js';
 
 export const showCart = (req, res) => {
   const data = cartDetailed(req, productStore) || { lines: [], total: 0, count: 0 };
