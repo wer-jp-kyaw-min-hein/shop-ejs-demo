@@ -51,14 +51,24 @@
 </html> -->
 
 <!-- views/products/index.ejs -->
-<h1>Products</h1>
-<a href="products/new">New Product</a>
+<h1>Admin Products</h1>
+
+<a href="/admin/products/new">➕ New Product</a>
+
 <ul>
   <% (products || []).forEach(p => { %>
     <li>
       <strong><%= p.name %></strong> — ¥<%= p.price %>
-      <form action="/cart/add/<%= p.id %>" method="POST" style="display:inline">
-        <button type="submit">Add to Cart</button>
+
+      <!-- Edit Link -->
+      <a href="/admin/products/<%= p.id %>/edit">Edit</a>
+
+      <!-- Delete Form -->
+      <form action="/admin/products/<%= p.id %>?_method=DELETE"
+            method="POST"
+            style="display:inline"
+            onsubmit="return confirm('Delete this product?')">
+        <button type="submit">Delete</button>
       </form>
     </li>
   <% }) %>
